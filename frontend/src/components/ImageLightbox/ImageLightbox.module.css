@@ -1,0 +1,96 @@
+/* 原图放大弹层（lightbox） */
+.overlay {
+  position: fixed;
+  inset: 0;
+  /* 图片要在中性的暗底上才看得出层次，用纯黑会显得脏、用浅色会吃掉浅色票面。
+     这个值和 antd Modal 的遮罩保持同一观感。 */
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  /* 比页面自身的 z-index 阶梯高一档（--z-tooltip），但仍低于 antd Modal 的
+     1000 —— 弹层和那些表单弹窗不会同时出现，真撞上时让 antd 在上面对。 */
+  z-index: var(--z-tooltip);
+  animation: lightboxFadeIn var(--transition-fast);
+}
+
+.image {
+  /* 顺带说明：不写死宽高，让浏览器按原始分辨率渲染，只在大图时缩小。
+     小票面不放大（放大只会变糊），大票面缩到能看全。 */
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: var(--radius-base);
+  background-color: var(--background);
+}
+
+.toolbar {
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.toolButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 6px var(--spacing-md);
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: var(--radius-base);
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-xs);
+  color: #FFFFFF;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.toolButton:hover {
+  background-color: rgba(255, 255, 255, 0.24);
+}
+
+.toolButton:focus-visible {
+  outline: 2px solid #FFFFFF;
+  outline-offset: 2px;
+}
+
+.hint {
+  position: absolute;
+  bottom: var(--spacing-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.72);
+  pointer-events: none;
+}
+
+@keyframes lightboxFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay { animation: none; }
+}
+
+/* 小屏：工具条和提示语都要贴边，还要给图片腾出宽度。断点对齐项目其他页面 */
+@media (max-width: 768px) {
+  .overlay {
+    padding: var(--spacing-sm);
+  }
+
+  .toolbar {
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+  }
+
+  .hint {
+    bottom: var(--spacing-sm);
+  }
+}

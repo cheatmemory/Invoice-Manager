@@ -1,0 +1,59 @@
+.controlBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-base) 0;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex: 1;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+}
+
+/* 定宽是桌面端的排法。窄屏下这一排会横向溢出，min-width 兜底 +
+   允许换行，让它们自上而下铺开而不是互相挤压。 */
+.searchInput {
+  width: 240px;
+}
+
+.statusFilter {
+  min-width: 120px;
+}
+
+.dateRange {
+  min-width: 240px;
+}
+
+@media (max-width: 768px) {
+  .controlBar {
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  .leftSection {
+    flex-wrap: wrap;
+    flex-basis: 100%;
+  }
+
+  .searchInput,
+  .statusFilter,
+  .dateRange {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+.totalText {
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}

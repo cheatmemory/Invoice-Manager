@@ -1,0 +1,805 @@
+/* Invoice Detail Page Layout */
+.pageContainer {
+  background-color: var(--surface);
+  min-height: 100vh;
+}
+
+/* Header Section */
+.pageHeader {
+  height: 72px;
+  background-color: var(--background);
+  border-bottom: 1px solid var(--border);
+  padding: var(--spacing-base) var(--spacing-2xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-base);
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.backButton:hover {
+  background-color: var(--border);
+}
+
+.backButton:focus-visible {
+  outline: 2px solid var(--black-primary);
+  outline-offset: 2px;
+}
+
+/* 「上一张 / 下一张」快速导航。样式跟 .backButton 一致，连成一组；
+   到边界（第一张/最后一张）置灰，比「点下去没反应」更清楚。 */
+.navButtons {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.navButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.navButton:hover:not(:disabled) {
+  background-color: var(--border);
+}
+
+.navButton:disabled {
+  color: var(--muted-foreground);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.navButton:focus-visible {
+  outline: 2px solid var(--black-primary);
+  outline-offset: 2px;
+}
+
+.headerTitle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.invoiceNumber {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+}
+
+.invoiceMetadata {
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  color: var(--muted-foreground);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.rejectButton {
+  padding: var(--spacing-sm) var(--spacing-base);
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.rejectButton:hover {
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.rejectButton:focus-visible {
+  outline: 2px solid var(--error);
+  outline-offset: 2px;
+}
+
+/* 请求进行中才禁用。写了 cursor:pointer 的按钮一旦 disabled 还显示手型，
+   会被当成「点了没反应」。 */
+.rejectButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.rejectButton:disabled:hover {
+  border-color: var(--border);
+  color: var(--foreground);
+}
+
+.rejectHint {
+  margin-bottom: var(--spacing-base);
+  color: var(--muted-foreground);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
+.confirmButton {
+  padding: var(--spacing-sm) var(--spacing-base);
+  background-color: var(--black-primary);
+  border: 1px solid var(--black-primary);
+  border-radius: var(--radius-md);
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  color: var(--background);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.confirmButton:hover {
+  background-color: #2D2D2D;
+  border-color: #2D2D2D;
+}
+
+.confirmButton:focus-visible {
+  outline: 2px solid var(--black-primary);
+  outline-offset: 2px;
+}
+
+/* Content Body */
+.contentBody {
+  padding: var(--spacing-xl) var(--spacing-2xl);
+  display: flex;
+  gap: var(--spacing-xl);
+}
+
+/* Left Panel */
+.leftPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  /* 明细表那 9 列的宽度是写死的（48+110+60+80+130+110+70+110 加上单元格内边距
+     一共 700 多），它的 min-content 就是这个数。flex 项默认 min-width: auto，
+     会被这张表顶着至少这么宽 —— 于是整页跟着出横向滚动条，窄屏下更明显。
+     写 0 才允许这一栏被压窄，多出来的空间由 .cardBody 自己横滚。 */
+  min-width: 0;
+}
+
+/* Card Styling */
+.card {
+  background-color: var(--background);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.cardHeader {
+  padding: var(--spacing-base) var(--spacing-lg);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardTitle {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.cardBody {
+  padding: var(--spacing-lg);
+  /* 明细表 9 列的宽度是写死的，不够放就顶破卡片、整页跟着出横向滚动条。
+     给卡片内容一个横向滚动兜底：塞得下时什么都不变，塞不下时表格自己在
+     盒子里滚，而不是把页面撑宽。
+
+     overflow-x 一旦不是 visible，overflow-y 会被计算成 auto —— .cardBody 的
+     高度等于内容高度，纵向不会出滚动条也不会裁掉东西。 */
+  overflow-x: auto;
+}
+
+/* Status Tag */
+.statusTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--spacing-sm);
+  border-radius: var(--radius-base);
+  font-family: var(--font-secondary);
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+}
+
+.statusTag.pending {
+  background-color: #FFF7ED;
+  color: var(--warning-dark);
+}
+
+.statusTag.processing {
+  background-color: #EFF6FF;
+  color: var(--info-dark);
+}
+
+.statusTag.success {
+  background-color: #F0FDF4;
+  color: var(--success-dark);
+}
+
+.statusTag.warning {
+  background-color: #FFFBEB;
+  color: var(--warning-dark);
+}
+
+.statusTag.error {
+  background-color: #FEF2F2;
+  color: var(--error-dark);
+}
+
+/* Comparison Table */
+.comparisonHeader {
+  padding: var(--spacing-md) var(--spacing-base);
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.matchStatus {
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground);
+}
+
+.comparisonTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.comparisonTable thead th {
+  padding: var(--spacing-md) var(--spacing-base);
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--muted-foreground);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--surface);
+}
+
+.comparisonTable tbody td {
+  padding: var(--spacing-md) var(--spacing-base);
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  color: var(--foreground);
+  border-bottom: 1px solid var(--border);
+}
+
+.comparisonTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Mismatch highlighting */
+.comparisonTable tbody tr.mismatch td {
+  background-color: #FEF2F2;
+}
+
+.comparisonTable tbody tr.match td {
+  background-color: transparent;
+}
+
+.fieldCell {
+  font-weight: var(--font-weight-medium);
+}
+
+.valueCell {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.statusIcon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.statusIcon.match {
+  color: var(--success);
+}
+
+.statusIcon.mismatch {
+  color: var(--error);
+}
+
+/* Items Table - 发票明细行 */
+.itemHeader {
+  padding: var(--spacing-md) var(--spacing-base);
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--muted-foreground);
+}
+
+.itemTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.itemTable th,
+.itemTable td {
+  padding: var(--spacing-sm) var(--spacing-base);
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  color: var(--foreground);
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.itemTable th {
+  font-weight: var(--font-weight-medium);
+  color: var(--muted-foreground);
+}
+
+.itemTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* 数字列右对齐，跟票面习惯一致 */
+.itemTable .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 明细金额合计行 */
+.itemTotal td {
+  font-weight: var(--font-weight-medium);
+  background-color: var(--surface);
+}
+
+.itemEmpty {
+  padding: var(--spacing-base);
+  font-size: var(--font-size-sm);
+  color: var(--muted-foreground);
+}
+
+/* 明细为空时的兜底展示：主表那四个「逐行字段」的单值。
+   有明细时不显示（逐行看明细），没有明细时至少别让票面信息消失。 */
+.itemFallback {
+  margin-top: var(--spacing-xs);
+  color: var(--foreground);
+}
+
+/* ---- 必填 / 选填标识 ---- */
+/* 展示态的星号要自己画（Descriptions 没有 required 属性）；编辑态的星号由
+   antd 的 required 规则渲染。两边都用 --error，看起来才是同一个体系。 */
+.requiredMark {
+  margin-right: 4px;
+  color: var(--error);
+  font-weight: var(--font-weight-medium);
+}
+
+.formHint {
+  margin-bottom: var(--spacing-base);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px dashed var(--border);
+  font-size: var(--font-size-sm);
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+
+.formHintOptional {
+  margin-top: 2px;
+}
+
+/* ---- 明细行的编辑态 ---- */
+/* InputNumber 在编辑态要撑满单元格，否则窄列里数字会被截断 */
+.itemInput {
+  width: 100%;
+}
+
+/* 数字列右对齐的规则是给文本用的，输入框里的文字要单独对齐一次 */
+.itemTable .num .itemInput input {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.itemEditBar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-base);
+  padding: var(--spacing-sm) var(--spacing-base) 0;
+}
+
+.itemHint {
+  font-size: var(--font-size-sm);
+  color: var(--muted-foreground);
+}
+
+/* 明细合计与发票金额对不上时的提示：这是人工修正最需要的反馈 */
+.itemWarn {
+  margin: var(--spacing-sm) var(--spacing-base) var(--spacing-base);
+  padding: var(--spacing-sm) var(--spacing-base);
+  font-size: var(--font-size-sm);
+  color: var(--warning-dark);
+  background-color: #FFFBEB;
+  border: 1px solid #FDE68A;
+  border-radius: var(--radius-sm);
+}
+
+/* Right Panel - PDF Preview */
+.rightPanel {
+  width: 420px;
+  flex-shrink: 0;
+  /* 「原始文件」是核对票面时一直要对着看的参照物，左栏很长时它不能跟着滚出屏幕。
+
+     sticky 要生效必须配 align-self: flex-start：flex 项默认 stretch，会被拉成
+     和左栏一样高 —— 元素自身就占满整个滚动区，粘不粘都看不出来。
+
+     max-height 与 top 用同一个间距，保证「粘住之后整块卡片完整落在视口里」。
+     display:flex 是为了让卡片在高度不够时被压扁，从而走 .previewBody 内部滚动，
+     而不是整块撑出屏幕（撑出去的话底部就永远滚不到，等于白粘）。 */
+  position: sticky;
+  top: var(--spacing-xl);
+  align-self: flex-start;
+  max-height: calc(100vh - var(--spacing-xl) * 2);
+  display: flex;
+  flex-direction: column;
+}
+
+.previewCard {
+  background-color: var(--background);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  /* min-height: 0 是允许它被 .rightPanel 的 max-height 压扁的前提，
+     否则 flex 项不会缩到内容高度以下。 */
+  min-height: 0;
+}
+
+.previewHeader {
+  padding: var(--spacing-base) var(--spacing-lg);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.previewTitle {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+}
+
+.previewControls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.zoomButton {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-base);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--foreground);
+}
+
+.zoomButton:hover {
+  background-color: var(--border);
+}
+
+.zoomButton:focus-visible {
+  outline: 2px solid var(--black-primary);
+  outline-offset: 2px;
+}
+
+.downloadButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 6px var(--spacing-md);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-base);
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-xs);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.downloadButton:hover {
+  background-color: var(--border);
+}
+
+.downloadButton:focus-visible {
+  outline: 2px solid var(--black-primary);
+  outline-offset: 2px;
+}
+
+.previewBody {
+  padding: var(--spacing-lg);
+  overflow: auto;
+  flex: 1;
+  /* 同上：不写这个的话内部滚动区会先把卡片撑高，overflow: auto 就轮不到生效 */
+  min-height: 0;
+}
+
+.previewContent {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-base);
+  overflow: hidden;
+}
+
+.previewFrame {
+  width: 100%;
+  height: 600px;
+  border: none;
+  display: block;
+}
+
+/* 缩略图：整块可点，点开看原图 */
+.previewTrigger {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  /* 放大镜光标 —— 不写的话用户完全看不出这张图能点 */
+  cursor: zoom-in;
+  /* line-height: 0 去掉 img 作为行内元素时基线留出的那几像素空隙 */
+  line-height: 0;
+}
+
+/* .previewContent 有 overflow: hidden，会用正向 offset 的 outline 被裁掉，
+   所以靠负 offset 画在内侧 */
+.previewTrigger:focus-visible {
+  outline: 2px solid var(--black-primary);
+  outline-offset: -2px;
+}
+
+.previewImage {
+  width: 100%;
+  max-height: 600px;
+  object-fit: contain;
+  display: block;
+}
+
+.zoomHint {
+  position: absolute;
+  right: var(--spacing-sm);
+  bottom: var(--spacing-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 4px var(--spacing-sm);
+  background-color: rgba(0, 0, 0, 0.65);
+  color: #FFFFFF;
+  border-radius: var(--radius-base);
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-xs);
+  line-height: 1.6;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  /* 提示条只是说明，别让它把点击接走 —— 否则点在提示上就不会触发打开 */
+  pointer-events: none;
+}
+
+.previewTrigger:hover .zoomHint,
+.previewTrigger:focus-visible .zoomHint {
+  opacity: 1;
+}
+
+/* Buttons */
+.actionButton {
+  padding: var(--spacing-sm) var(--spacing-base);
+  border-radius: var(--radius-md);
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  border: none;
+}
+
+.actionButton.primary {
+  background-color: var(--black-primary);
+  color: var(--background);
+}
+
+.actionButton.primary:hover {
+  background-color: #2D2D2D;
+}
+
+.actionButton.secondary {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+.actionButton.secondary:hover {
+  background-color: var(--border);
+}
+
+/* Alert styling */
+.infoAlert {
+  margin-bottom: var(--spacing-base);
+  padding: var(--spacing-md);
+  background-color: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: var(--radius-md);
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  color: #1E40AF;
+}
+
+/* Loading State */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  min-height: 400px;
+}
+
+.loadingText {
+  font-size: var(--font-size-sm);
+  color: var(--muted-foreground);
+}
+
+/* 加载失败 / 找不到发票这两处的兜底态：说明原因 + 给一个明确的出口。 */
+.stateBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-base);
+  text-align: center;
+  padding: var(--spacing-xl);
+}
+
+.stateTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+}
+
+.stateDesc {
+  font-size: var(--font-size-sm);
+  color: var(--muted-foreground);
+  max-width: 460px;
+  line-height: var(--line-height-normal);
+}
+
+/* Responsive Design */
+/* 容器不够宽时两栏会互相挤：右栏是固定 420px，左栏被压到 300px 上下，
+   明细表那几列固定宽度加起来就爆了（表现为「货物或应税劳务名称」竖排）。
+   断点对齐列表页现有的 1200px。 */
+@media (max-width: 1200px) {
+  .contentBody {
+    flex-direction: column;
+    padding: var(--spacing-base) var(--spacing-xl);
+    gap: var(--spacing-base);
+  }
+
+  /* 堆叠之后预览已经占满整屏宽，再粘住视口就只是盖住下面正在看的内容 */
+  .rightPanel {
+    position: static;
+    width: 100%;
+    max-height: none;
+  }
+
+  .previewCard {
+    max-height: none;
+  }
+
+  /* 下面是两张表在窄屏下的列宽兜底。
+
+     明细表写着 table-layout: fixed，9 列里只有「货物或应税劳务名称」是 auto 列。
+     容器比那 8 个写死的宽度加起来还窄时，auto 列分不到任何剩余空间，被压成 0
+     （实测桌面端就是 0px，品名整列看不见 —— 旧版被 .card 的 overflow: hidden
+     裁掉所以没暴露）。给它一个真实宽度，整体宽度交给 .cardBody 横滚：
+     横向滑一下比「一个字一行」好读得多。
+
+     只写在断点里 —— 桌面端布局一个字都不动。 */
+  .itemTable th:nth-child(2),
+  .itemTable td:nth-child(2) {
+    width: 180px;
+  }
+
+  /* 比对表首列是字段名（「购买方纳税人识别号」有 9 个字），auto 布局下它
+     同样会被压成竖排。给个下限让它至少能横向排开。 */
+  .comparisonTable th:first-child,
+  .comparisonTable td:first-child {
+    min-width: 132px;
+  }
+}
+
+@media (max-width: 768px) {
+  .pageHeader {
+    height: auto;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-base);
+  }
+
+  .headerLeft {
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  .invoiceNumber {
+    word-break: break-all;
+  }
+
+  .contentBody {
+    padding: var(--spacing-base);
+  }
+
+  .previewBody {
+    padding: var(--spacing-base);
+  }
+
+  /* 让整张票在一屏里能看全，不用边滚边对 */
+  .previewImage {
+    max-height: 60vh;
+  }
+
+  .previewFrame {
+    height: 60vh;
+  }
+}

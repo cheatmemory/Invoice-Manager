@@ -1,0 +1,60 @@
+# ============================================================
+# Invoice-Manager .gitignore
+# 本项目源码很小（约 1.8 MB）。以下忽略项均为「可重新生成的运行环境」，
+# 切勿提交，否则仓库会膨胀到 1 GB+，且可能泄露密钥。
+# 克隆后请运行 setup_env.py / npm install / start_pg.py --once 重建环境。
+# ============================================================
+
+# ---- Python 后端虚拟环境（约 1.1 GB：含 PaddleOCR/OpenCV/numpy 等编译库）----
+backend/venv/
+venv/
+.venv/
+env/
+
+# ---- Python 缓存 / 构建产物 ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+
+# ---- 前端依赖与构建产物（约 155 MB）----
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+
+# ---- 内置 PostgreSQL（程序约 46 MB + 数据库约 45 MB）----
+.pgvenv/
+.pgdata/
+
+# ---- 密钥 / 环境变量（含 API Key，绝对不能提交）----
+backend/.env
+.env
+.env.local
+*.env
+
+# 保留环境变量模板，方便他人照着填自己的 Key
+!backend/.env.example
+
+# ---- 日志 / 临时文件 ----
+*.log
+logs/
+pgserver_logs/
+*.pid
+*.tmp
+
+# ---- 编辑器 / 操作系统 ----
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# ---- 其他本地数据 ----
+*.sqlite3
+*.db

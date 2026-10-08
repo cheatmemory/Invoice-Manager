@@ -1,0 +1,123 @@
+/* Main Layout Container */
+.layoutContainer {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--background);
+}
+
+/* Main Content Area */
+.mainContent {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* 跟 .leftPanel 同理：内容里有写死宽度的表格，flex 项默认 min-width: auto
+     会把整页顶出横向滚动条。写 0 让这块能跟着视口收窄，窄屏由内部自己横滚。 */
+  min-width: 0;
+}
+
+/* Content Wrapper */
+.contentWrapper {
+  flex: 1;
+  padding: var(--content-padding-y) var(--content-padding-x);
+}
+
+/* Top Navigation - 窄屏下替掉侧边栏
+   默认隐藏，≤768px 由下头的媒体查询放出来。用 CSS 断点切换显隐而不是
+   matchMedia：窗口一缩立刻跟着变，也省掉一层 JS 监听。 */
+.topNav {
+  display: none;
+}
+
+.topNavLogo {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+}
+
+/* .layoutContainer 是横向 flex，这条导航和 main 抢同一行。不给 min-width: 0
+   的话它的自动最小尺寸是「几个入口横向铺开」的宽度，会把 main 挤到只剩一百来
+   像素（390 那档实测 main 只剩 116px，整页内容跟着变形）。
+   这里允许它被压窄，再由 .topNavLinks 自己横滚兜住。 */
+.topNav {
+  min-width: 0;
+}
+
+.topNavLinks {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-base);
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.topNavLink {
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  color: var(--muted-foreground);
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+/* 独立的类名，不要写成 .topNavLink.active —— CSS module 里
+   styles.xxx 是按「单个类名」查表的，复合选择器查不到就会得到 undefined，
+   最后拼出一个 "undefined" 到 className 上。 */
+.topNavLinkActive {
+  color: var(--foreground);
+  font-weight: var(--font-weight-medium);
+}
+
+/* LLM Promo Alert */
+.llmPromoAlert {
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: var(--spacing-base) var(--content-padding-x);
+  color: var(--muted-foreground);
+  font-size: var(--font-size-sm);
+  border-top: 1px solid var(--border);
+}
+
+/* Responsive: 侧边栏收起后的窄屏布局
+   断点跟侧边栏那边的 768px 对齐 —— 必须同宽，否则会有一小段区间
+   「侧边栏没了但顶部导航还没出来」，导航就整个消失了。 */
+@media (max-width: 768px) {
+  .topNav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    /* 顶部这条要粘住：页面很长时不然一滚就看不见去哪了 */
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+    padding: var(--spacing-sm) var(--spacing-base);
+    background-color: var(--background);
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* 侧边栏 display:none 之后这 240px 的左边距会空白一大块 */
+  .mainContent {
+    margin-left: 0;
+  }
+
+  /* 48px 的左右留白在手机上比内容还宽 */
+  .contentWrapper {
+    padding-left: var(--spacing-base);
+    padding-right: var(--spacing-base);
+  }
+
+  /* 顶栏和主内容原来在同一行抢宽度，手机上导航一挤就把正文压到 200px 以内。
+     侧边栏已经收起、只剩这两个块，改成上下排：导航一条，正文一整块。 */
+  .layoutContainer {
+    flex-direction: column;
+  }
+}

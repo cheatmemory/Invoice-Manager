@@ -1,0 +1,10 @@
+.popoverContent {
+  width: 220px;
+}
+
+.popoverHeader {
+  margin-bottom: var(--spacing-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

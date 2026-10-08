@@ -1,0 +1,250 @@
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+}
+
+/* Page Header */
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: var(--spacing-xl);
+  border-bottom: 1px solid var(--border);
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.pageTitle {
+  font-family: var(--font-primary);
+  font-size: 32px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+  margin: 0;
+  line-height: var(--line-height-tight);
+}
+
+.pageSubtitle {
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-base);
+  color: var(--muted-foreground);
+  margin: 0;
+  line-height: var(--line-height-normal);
+}
+
+.headerActions {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.secondaryButton {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+.secondaryButton:hover {
+  background-color: var(--surface);
+  border-color: var(--gray-400);
+}
+
+.primaryButton {
+  background-color: var(--black-primary);
+  color: var(--background);
+  border: none;
+}
+
+.primaryButton:hover {
+  background-color: #1a1a1a;
+}
+
+/* Metrics Section */
+.metricsSection {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-xl);
+}
+
+/* Additional Controls */
+.additionalControls {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  align-items: center;
+  padding: var(--spacing-base) 0;
+}
+
+/* Table Container */
+.tableContainer {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-base);
+  /* 不能写 overflow: hidden。表头吸附（position: sticky）找的是最近的
+     滚动容器，overflow:hidden 会把这个盒子变成「不可滚的滚动容器」，
+     于是表头吸在自己内部、不跟页面滚动 —— 等于没吸。圆角裁剪交给
+     里面的 antd 表格自己处理。 */
+}
+
+/* antd 开 sticky 时会顺手给 .ant-table 写 overflow: hidden（实测如此，
+   探针见 round 8 记录），吸顶表头（.ant-table-sticky-holder）的滚动容器
+   就变成这个不滚动的盒子，永远吸不住、跟着内容滚走。覆盖成 visible：
+   横向滚动本来就在内层 .ant-table-content 里处理，不依赖这一层。 */
+.invoiceTable :global(.ant-table) {
+  overflow: visible;
+}
+
+.invoiceTable :global(.ant-table-thead > tr > th) {
+  background-color: var(--surface);
+  padding: 14px 20px;
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground);
+}
+
+.invoiceTable :global(.ant-table-tbody > tr > td) {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  color: var(--foreground);
+}
+
+.invoiceTable :global(.ant-table-tbody > tr:last-child > td) {
+  border-bottom: none;
+}
+
+.invoiceTable :global(.ant-table-tbody > tr:hover > td) {
+  background-color: var(--surface);
+}
+
+/* Pagination Row */
+.paginationRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-base) var(--spacing-xl);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-base);
+  height: 56px;
+}
+
+.paginationLeft {
+  display: flex;
+  align-items: center;
+}
+
+.paginationText {
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  color: var(--muted-foreground);
+}
+
+.paginationRight {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.pageNumbers {
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-sm);
+  color: var(--foreground);
+  padding: 0 var(--spacing-md);
+}
+
+/* 行内操作区。「详情」「删除」两个文字按钮之间的那点空当由这里给，
+   不给 Space 默认 8px 会把两个按钮挤成一坨。 */
+.rowActions :global(.ant-space-item + .ant-space-item) {
+  margin-left: 4px;
+}
+
+/* 从详情页「返回列表」后，被定位的那一行短暂高亮（几秒后 JS 摘掉这个 class，
+   动画本身也淡出到透明，两种结束方式视觉上是连续的）。 */
+.focusedRow :global(td) {
+  animation: rowFocusFlash 2.4s ease-out forwards;
+}
+
+@keyframes rowFocusFlash {
+  0% {
+    background-color: #d6e9ff;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.popconfirmHint {
+  font-size: var(--font-size-xs);
+  color: var(--muted-foreground);
+  margin-top: 4px;
+}
+
+/* 空态 / 错误态。antd 默认那行「暂无数据」太薄了，撑不起「接下来怎么办」，
+   这里给一个带说明和出口的块。 */
+.stateBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  text-align: center;
+}
+
+.stateTitle {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground);
+}
+
+.stateDesc {
+  font-size: var(--font-size-sm);
+  color: var(--muted-foreground);
+  max-width: 420px;
+  line-height: var(--line-height-normal);
+}
+
+.selectedCount {
+  font-size: var(--font-size-sm);
+  color: var(--muted-foreground);
+  line-height: 32px;
+  white-space: nowrap;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .metricsSection {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .pageHeader {
+    flex-direction: column;
+    gap: var(--spacing-base);
+  }
+
+  .metricsSection {
+    grid-template-columns: 1fr;
+  }
+
+  .paginationRow {
+    flex-direction: column;
+    height: auto;
+    gap: var(--spacing-base);
+  }
+
+  /* 手机上「批量修改状态 / 重新解析 / 批量删除」三个按钮会排成一长条，
+     让它们各占一行、左右铺开，比挤在一起点不准好。 */
+  .selectedCount {
+    line-height: normal;
+  }
+
+  .stateBox {
+    padding: var(--spacing-xl) var(--spacing-base);
+  }
+}
